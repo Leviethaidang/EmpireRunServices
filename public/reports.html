@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>EmpireRunServices</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/shared.css" />
+</head>
+<body>
+  <div id="header-slot"></div>
+
+  <div class="admin-root wide">
+    <h1>Logs</h1>
+
+    <div class="logs-layout">
+      <!-- LEFT: Stats -->
+      <div class="stats-area">
+        <div class="column">
+          <h2>Summary</h2>
+          <div id="summary-grid" class="summary-grid">
+            <div class="summary-item">
+              <div class="summary-label">Players</div>
+              <div class="summary-value" id="sum-players">-</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Win Rate</div>
+              <div class="summary-value" id="sum-completion">-</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Wins Total</div>
+              <div class="summary-value" id="sum-wins">-</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Losses Total</div>
+              <div class="summary-value" id="sum-losses">-</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Avg Achievements</div>
+              <div class="summary-value" id="sum-avg-ach">-</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Winners</div>
+              <div class="summary-value" id="sum-won">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <h2>Player List</h2>
+
+          <div class="player-toolbar">
+            <input id="player-search" class="player-search" placeholder="Search by email / username..." />
+          </div>
+
+          <div class="player-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Wins</th>
+                  <th>Losses</th>
+                  <th>Ach</th>
+                  <th>Device</th>
+                </tr>
+              </thead>
+              <tbody id="player-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Logs (keep size) -->
+      <div class="logs-area">
+        <div class="column">
+          <h2>Realtime Logs</h2>
+          <div id="log-list" class="log-list">
+            <div id="log-loading" class="log-item hidden">
+              <div class="log-line">Loading...</div>
+              <div class="log-time">Fetching older logs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini modal -->
+    <div id="detail-overlay" class="modal-overlay"></div>
+    <div id="detail-modal" class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="detail-title">Player Detail</div>
+        <button class="modal-close" id="detail-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-kv" id="detail-kv"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch("/header.html")
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById("header-slot").innerHTML = html;
+        const s = document.createElement("script");
+        s.src = "/header.js";
+        s.onload = () => window.__ERS_Header && window.__ERS_Header.init();
+        document.body.appendChild(s);
+      });
+  </script>
+
+  <script src="/reports.js"></script>
+</body>
+</html>

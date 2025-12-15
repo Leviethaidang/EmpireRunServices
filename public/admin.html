@@ -4,170 +4,12 @@
   <meta charset="UTF-8" />
   <title>Database Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: #0b1018;
-      color: #f3f3f3;
-    }
-
-    .admin-root {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    h1 {
-      margin-top: 16px;
-      margin-bottom: 8px;
-      font-size: 24px;
-      text-align: center;
-    }
-
-    .status-line {
-      font-size: 14px;
-      padding: 8px 12px;
-      background: #1e2533;
-      border-radius: 6px;
-      margin-bottom: 16px;
-      white-space: pre-wrap;
-    }
-
-    .layout {
-      display: flex;
-      gap: 16px;
-    }
-
-    .column {
-      flex: 1;
-      background: #151b26;
-      border-radius: 8px;
-      padding: 12px;
-      min-height: 300px;
-    }
-
-    .column h2 {
-      margin-top: 0;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    thead {
-      background: #222a38;
-    }
-
-    th, td {
-      padding: 6px 8px;
-      border-bottom: 1px solid #283141;
-      text-align: left; 
-    }
-
-    tbody tr {
-      cursor: pointer;
-    }
-
-    tbody tr:hover {
-      background: #222a38;
-    }
-
-    .actions-btn {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 18px;
-      padding: 0 4px;
-      color: #f3f3f3;
-    }
-
-    .actions-btn:hover {
-      color: #ff6666;
-    }
-
-    .selected-email-label {
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: #c5c9d5;
-    }
-    .hidden {
-      display: none;
-    }
-
-    .back-btn {
-      border: none;
-      background: transparent;
-      color: #f3f3f3;
-      font-size: 16px;
-      cursor: pointer;
-      margin-right: 8px;
-      padding: 0 4px;
-    }
-
-    .back-btn:hover {
-      color: #ff6666;
-    }
-        .context-menu {
-      position: fixed;
-      background: #1e2533;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      padding: 4px 0;
-      z-index: 9998;
-      min-width: 120px;
-    }
-
-    .context-menu button {
-      width: 100%;
-      padding: 6px 10px;
-      border: none;
-      background: transparent;
-      color: #f3f3f3;
-      text-align: left;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .context-menu button:hover {
-      background: #ff4444;
-    }
-
-    /* Overlay khoá admin */
-    #admin-lock-overlay {
-      position: fixed;
-      inset: 0;
-      background: url("/img/AdminLockBG.png") center center / cover no-repeat;
-      z-index: 9999;
-    }
-
-    /* Input ẩn hoàn toàn, chỉ dùng để lắng nghe phím */
-    .lock-input-hidden {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-  </style>
+  <link rel="stylesheet" href="/shared.css" />
 </head>
-<body>
-  <!-- Overlay bí mật: chỉ là nền ảnh, input ẩn để lắng nghe phím -->
-  <div id="admin-lock-overlay">
-    <input
-      id="admin-pass-input"
-      class="lock-input-hidden"
-      type="password"
-      autocomplete="off"
-    />
-  </div>
 
+<body>
+  <!-- Header load slot -->
+  <div id="header-slot"></div>
 
   <div class="admin-root">
     <h1>Database Manager</h1>
@@ -190,15 +32,15 @@
         </tbody>
       </table>
     </div>
-    
 
     <!-- VIEW: danh sách Saved Games cho 1 email -->
-        <div id="saves-view" class="column hidden">
-        <h2>
-            <button id="back-to-emails-btn" class="back-btn">←</button>
-            <span id="saves-title">Save files of: (none)</span>
-        </h2>
-        <table>
+    <div id="saves-view" class="column hidden">
+      <h2>
+        <button id="back-to-emails-btn" class="back-btn">←</button>
+        <span id="saves-title">Save files of: (none)</span>
+      </h2>
+
+      <table>
         <thead>
           <tr>
             <th>Username</th>
@@ -206,16 +48,34 @@
             <th></th>
           </tr>
         </thead>
-        <tbody id="save-table-body">
-        </tbody>
+        <tbody id="save-table-body"></tbody>
       </table>
     </div>
-</div>
+  </div>
 
-<div id="context-menu" class="context-menu hidden">
+  <!-- Context menu -->
+  <div id="context-menu" class="context-menu hidden">
     <button id="menu-delete-btn">Xoá</button>
-</div>
+  </div>
 
+  <!-- Load header.html + header.js -->
+  <script>
+    fetch("/header.html")
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById("header-slot").innerHTML = html;
+
+        const s = document.createElement("script");
+        s.src = "/header.js";
+        s.onload = () => window.__ERS_Header && window.__ERS_Header.init();
+        document.body.appendChild(s);
+      })
+      .catch(err => {
+        console.error("Failed to load header:", err);
+      });
+  </script>
+
+  <!-- Page script -->
   <script src="/admin.js"></script>
 </body>
 </html>
